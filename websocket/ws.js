@@ -73,6 +73,8 @@
 		var clientMode=['command'];
 		var clientConfig=[{}];
 		
+		console.log("Connected Client: "+cid);
+		
 		var mode=function(){
 			return clientMode[clientMode.length-1];
 		};
@@ -86,6 +88,10 @@
 		var clientsfolder=folderName(cid);
 		
 		fs.mkdir(clientsfolder);
+		
+		console.log("Connected Client: "+cid+', with folder: '+clientsfolder);
+		
+		
 		var process=function(data, flags){
 			if(flags){
 				if(flags.binary){  

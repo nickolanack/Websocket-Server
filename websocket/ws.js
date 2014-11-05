@@ -11,7 +11,7 @@
 	var client=0; 
 
 	var folderName=function(i){
-		return 'client_'+("0000000"+i).slice(-7);
+		return 'client_'+('0000000'+i).slice(-7);
 	};
 	
 
@@ -72,9 +72,7 @@
 		var i=1; 
 		var clientMode=['command'];
 		var clientConfig=[{}];
-		
-		console.log("Connected Client: "+cid);
-		
+			
 		var mode=function(){
 			return clientMode[clientMode.length-1];
 		};
@@ -89,24 +87,49 @@
 		
 		fs.mkdir(clientsfolder);
 		
-		console.log("Connected Client: "+cid+', with folder: '+clientsfolder);
+		console.log('Connected Client: '+(cid)+', with folder: '+clientsfolder);
 		
 		
 		var process=function(data, flags){
 			if(flags){
 				if(flags.binary){  
-					fs.writeFile(clientsfolder+"/f_"+('000000'+(i++)).slice(-6)+".png", data, function (err) {
-						if (err) throw err;
-					});
+					if(mode()=='captureimageframes'){
+						var opts=config();
+						fs.writeFile(clientsfolder+'/f_'+('000000'+(i++)).slice(-6)+'.'+opts.ext, data, function (err) {
+							if (err) throw err;
+						});	
+					}
 
+				}else{
+					console.log(data);
+					
+					if(mode()==='command'){
+						
+						if(data==='begin captureimageframes -fps 10 -mime png'){
+							
+							clientMode.push('captureimageframes');
+							clientConfig.push({
+								ext:"png",
+								fps:10
+							});
+							
+						}
+						
+					}else{
+						
+						if(data==='stop'){
+							
+							clientMode.pop();
+							clientConfig.pop();
+							
+						}
+						
+					}
+					
 				}
 
 			}else{
-				if(mode()==="command"){
-					
-				}else{
-					
-				}
+				
 				console.log(data);
 			}
 		};

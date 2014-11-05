@@ -70,7 +70,7 @@
 	
 
 	wss.on('connection', function(ws) {
-		var i=1; 
+		
 		var clientMode=['command'];
 		var clientConfig=[{}];
 			
@@ -121,13 +121,15 @@
 								ext:"png",
 								fps:10
 							});
-							
-							dataHandler=function(data){
-								var opts=config();
-								fs.writeFile(clientsfolder+'/f_'+('000000'+(i++)).slice(-6)+'.'+opts.ext, data, function (err) {
-									if (err) throw err;
-								});	
-							};
+							dataHandler=(function(){ 
+								var i=1;
+								return function(data){
+									var opts=config();
+									fs.writeFile(clientsfolder+'/f_'+('000000'+(i++)).slice(-6)+'.'+opts.ext, data, function (err) {
+										if (err) throw err;
+									});	
+								}; 
+							})();
 							
 							console.log((cid)+': mode: '+mode());
 							
@@ -157,7 +159,27 @@
 							    			  if (err) {
 							    				  throw err;
 							    			  }
-							    			  ws.send(data);
+							    			  ws.send(data, function(){
+							    				  
+							    				  fs.readdir(clientsfolder,function(err, files){
+							  						if(err){
+							  							console.log('Error reading dir: '+clientsfolder);
+							  						}else{
+							  							files.forEach(function(f){
+							  								fs.unlink(clientsfolder+'/'+f,function(err){
+							  									if(err){
+							  										throw err;
+							  									}else{
+							  										//console.log('Deleted: '+folder+'/'+f);
+							  										//too much logging...
+							  									}
+							  								});
+							  							});
+							  						}
+							    				  });
+							    				  
+							    				  
+							    			  });
 							    			});
 							    		
 							    		

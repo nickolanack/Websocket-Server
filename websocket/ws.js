@@ -51,7 +51,7 @@
 								if(err){
 									throw err;
 								}else{
-									console.log('Deleted: '+folder+'/');
+									console.log((recurse?'':(i+': '))+'Deleted: '+folder+'/');
 								}
 							});
 							if(recurse===true){
@@ -158,11 +158,11 @@
 							var cmd='/usr/local/bin/ffmpeg -framerate 10 -i '+clientsfolder+'/f_%06d.png -c:v libx264 -r 30 -pix_fmt yuv420p '+out;
 							
 							shell.exec(cmd, function (error, stdout, stderr) {
-							    console.log('shell.exec: '+cmd+' >> ');
-							    console.log('stdout: '+stdout);
-							    console.log('stderr: '+stderr);
+							    console.log((cid)+': shell.exec: '+cmd+' >> ');
+							    //console.log((cid)+': stdout: '+stdout);
+							    //console.log((cid)+': stderr: '+stderr);
 							    if (error !== null) {
-							      console.log('exec error: ' + error);
+							      console.log((cid)+': exec error: ' + error);
 							    }
 							    
 							    
@@ -227,7 +227,7 @@
 				}
 
 			}else{
-				
+				//this doesn't happen... 
 				console.log(data);
 			}
 		};
@@ -237,7 +237,7 @@
 		
 		ws.on('close',function(code, message){
 			
-			console.log('Closed Connection: '+cid+':'+code+' '+message);
+			console.log((cid)+': Closed Connection: '+code+' '+message);
 			cleanup(cid);
 		});
 	});

@@ -108,12 +108,12 @@
 					if(mode()==='command'){
 						
 						//basically want to support a number of data stream types, 
-						//for html5 it is hard to stream encoded video data, so support image frames as
-						//one simple solution
+						//for html5 it is not possible(?) to stream encoded video data, so support
+						//for image frames is necessary
 						
 						if(data.indexOf('begin captureimageframes')===0){
 							
-							
+							//arguments should be parsed from data, eg data might be: 'begin captureimageframes -fps 10 -mime png'
 							
 							clientMode.push('captureimageframes');
 							clientConfig.push({
@@ -130,6 +130,9 @@
 							
 							console.log((cid)+': mode: '+mode());
 						}
+						
+						
+						
 						
 					}else{
 						

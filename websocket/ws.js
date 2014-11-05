@@ -129,7 +129,18 @@
 							};
 							
 							console.log((cid)+': mode: '+mode());
+							
+						}else if(data.indexOf('export')===0){
+							
+							fs.readdir(clientsfolder, function(err, files){
+								ws.send(JSON.stringify(files));
+							});
+							
+							
 						}
+						
+						
+						
 						
 						
 						
@@ -148,6 +159,8 @@
 						
 					}
 					
+					
+					
 				}
 
 			}else{
@@ -158,7 +171,7 @@
 
 
 		ws.on('message', process);
-		ws.send('hello ws');
+		
 		ws.on('close',function(code, message){
 			
 			console.log('Closed Connection: '+cid+':'+code+' '+message);

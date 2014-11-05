@@ -136,7 +136,7 @@
 						}else if(data.indexOf('export')===0){
 													
 							var out=clientsfolder+'/out.mp4';
-							var cmd='ffmpeg -framerate 10 -i '+clientsfolder+'/f_%06d.png -c:v libx264 -r 30 -pix_fmt yuv420p '+out;
+							var cmd='/usr/local/bin/ffmpeg -framerate 10 -i '+clientsfolder+'/f_%06d.png -c:v libx264 -r 30 -pix_fmt yuv420p '+out;
 							
 							shell.exec(cmd, function (error, stdout, stderr) {
 							    console.log('shell.exec: '+cmd+' >> ');

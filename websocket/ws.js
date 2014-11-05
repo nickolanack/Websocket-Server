@@ -104,7 +104,7 @@
 					dataHandler(data);
 
 				}else{
-					console.log(data);
+					console.log((cid)+": "+data);
 					
 					if(mode()==='command'){
 						

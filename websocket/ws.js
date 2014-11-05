@@ -80,6 +80,12 @@
 			return clientConfig[clientConfig.length-1];
 		};
 		
+		var emptyHandler=function(data){
+			//discard
+		};
+		
+		var dataHandler=emptyHandler;
+		
 		var cid=client; //this is the current connections id.
 		client++; //increment for other connections
 		
@@ -87,25 +93,27 @@
 		
 		fs.mkdir(clientsfolder);
 		
-		console.log('Connected Client: '+(cid)+', with folder: '+clientsfolder);
+		console.log('Connected Client: '+(cid)+', with folder: '+clientsfolder+'. mode: '+mode());
 		
 		
 		var process=function(data, flags){
 			if(flags){
 				if(flags.binary){  
-					if(mode()=='captureimageframes'){
-						var opts=config();
-						fs.writeFile(clientsfolder+'/f_'+('000000'+(i++)).slice(-6)+'.'+opts.ext, data, function (err) {
-							if (err) throw err;
-						});	
-					}
+					
+					dataHandler(data);
 
 				}else{
 					console.log(data);
 					
 					if(mode()==='command'){
 						
-						if(data==='begin captureimageframes -fps 10 -mime png'){
+						//basically want to support a number of data stream types, 
+						//for html5 it is hard to stream encoded video data, so support image frames as
+						//one simple solution
+						
+						if(data.indexOf('begin captureimageframes')===0){
+							
+							
 							
 							clientMode.push('captureimageframes');
 							clientConfig.push({
@@ -113,6 +121,14 @@
 								fps:10
 							});
 							
+							dataHandler=function(data){
+								var opts=config();
+								fs.writeFile(clientsfolder+'/f_'+('000000'+(i++)).slice(-6)+'.'+opts.ext, data, function (err) {
+									if (err) throw err;
+								});	
+							};
+							
+							console.log((cid)+': mode: '+mode());
 						}
 						
 					}else{
@@ -121,6 +137,9 @@
 							
 							clientMode.pop();
 							clientConfig.pop();
+							dataHandler=emptyHandler;
+							
+							console.log((cid)+': mode: '+mode());
 							
 						}
 						

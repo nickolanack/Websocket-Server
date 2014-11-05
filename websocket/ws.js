@@ -136,13 +136,7 @@
 								ws.send(JSON.stringify(files));
 							});
 							
-							
 						}
-						
-						
-						
-						
-						
 						
 						
 					}else{

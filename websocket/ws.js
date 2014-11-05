@@ -6,6 +6,7 @@
 
 	//include filesystem now, used later
 	var fs=require('fs');
+	var shell = require('child_process');
 	
 	//initialize client id, counter
 	var client=0; 
@@ -134,6 +135,19 @@
 							
 							fs.readdir(clientsfolder, function(err, files){
 								ws.send(JSON.stringify(files));
+							});
+							
+							var cmd='ffmpeg -framerate 10 -i '+clientsfolder+'/f_%06d.png -c:v libx264 -r 30 -pix_fmt yuv420p '+clientsfolder+'out.mp4';
+							
+							shell.exec(cmd, function (error, stdout, stderr) {
+							    console.log(cmd+' >> ');
+							    console.log(stdout + + stderr);
+							    if (error !== null) {
+							      console.log('exec error: ' + error);
+							    }
+	
+							    
+							    	
 							});
 							
 						}

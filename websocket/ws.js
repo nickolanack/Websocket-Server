@@ -82,7 +82,7 @@
 		};
 		
 		var emptyHandler=function(data){
-			//discard
+			console.log((cid)+': discarded binary data, empty handler');
 		};
 		
 		var dataHandler=emptyHandler;

@@ -137,14 +137,32 @@
 								ws.send(JSON.stringify(files));
 							});
 							
-							var cmd='ffmpeg -framerate 10 -i '+clientsfolder+'/f_%06d.png -c:v libx264 -r 30 -pix_fmt yuv420p '+clientsfolder+'out.mp4';
+							var out=clientsfolder+'/out.mp4';
+							var cmd='ffmpeg -framerate 10 -i '+clientsfolder+'/f_%06d.png -c:v libx264 -r 30 -pix_fmt yuv420p '+out;
 							
 							shell.exec(cmd, function (error, stdout, stderr) {
-							    console.log(cmd+' >> ');
-							    console.log(stdout + + stderr);
+							    console.log('shell.exec: '+cmd+' >> ');
+							    console.log('stdout: '+stdout);
+							    console.log('stderr: '+stderr);
 							    if (error !== null) {
 							      console.log('exec error: ' + error);
 							    }
+							    
+							    
+							   fs.exists(out, function(exists){
+							    	if(exists){
+							    		
+							    		fs.readFile(out, function (err, data) {
+							    			
+							    			  if (err) {
+							    				  throw err;
+							    			  }
+							    			  ws.send(data);
+							    			});
+							    		
+							    		
+							    	}
+							    });
 	
 							    
 							    	

@@ -134,11 +134,7 @@
 							console.log((cid)+': mode: '+mode());
 							
 						}else if(data.indexOf('export')===0){
-							
-							fs.readdir(clientsfolder, function(err, files){
-								ws.send(JSON.stringify(files));
-							});
-							
+													
 							var out=clientsfolder+'/out.mp4';
 							var cmd='ffmpeg -framerate 10 -i '+clientsfolder+'/f_%06d.png -c:v libx264 -r 30 -pix_fmt yuv420p '+out;
 							

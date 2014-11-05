@@ -16,25 +16,70 @@
 	
 
 	//remove all folders that where created from any previous server instances.
-	var cleanup=function(i){
+	//this does not work for non-empty folders
+	var cleanup=function(){
+		
+		var i=0, recurse=false;
+		if(arguments.length){
+			i=arguments[0];
+		}else{
+			recurse=true;
+		}
+		
 		var folder=folderName(i);
 		
 		fs.exists(folder, (function(folder){ 
 			return function (exists) {
 				if(exists){
-					fs.rmdir(folder);
-					cleanup(i+1);
+					fs.readdir(folder,function(err, files){
+						if(err){
+							console.log('Error reading dir: '+folder);
+						}else{
+							files.forEach(function(f){
+								fs.unlink(folder+'/'+f,function(err){
+									if(err){
+										throw err;
+									}else{
+										//console.log('Deleted: '+folder+'/'+f);
+										//too much logging...
+									}
+								});
+							});
+							
+							fs.rmdir(folder,function(err){
+								if(err){
+									throw err;
+								}else{
+									console.log('Deleted: '+folder+'/');
+								}
+							});
+							if(recurse===true){
+								cleanup(i+1);
+							}
+						}
+					});
+					
 				}
 			}; 
 		})(folder));
 		
 	};
-	cleanup(0);
+	cleanup(); //need to empty folders
 	
 	
 
 	wss.on('connection', function(ws) {
 		var i=1; 
+		var clientMode=['command'];
+		var clientConfig=[{}];
+		
+		var mode=function(){
+			return clientMode[clientMode.length-1];
+		};
+		var config=function(){
+			return clientConfig[clientConfig.length-1];
+		};
+		
 		var cid=client; //this is the current connections id.
 		client++; //increment for other connections
 		
@@ -51,6 +96,11 @@
 				}
 
 			}else{
+				if(mode()==="command"){
+					
+				}else{
+					
+				}
 				console.log(data);
 			}
 		};
@@ -58,6 +108,11 @@
 
 		ws.on('message', process);
 		ws.send('hello ws');
+		ws.on('close',function(code, message){
+			
+			console.log('Closed Connection: '+cid+':'+code+' '+message);
+			cleanup(cid);
+		});
 	});
 
 })(process.argv.length&&(!isNaN(process.argv[0]))?process.argv[0]:8080);

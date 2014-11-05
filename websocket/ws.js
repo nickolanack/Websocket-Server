@@ -118,14 +118,33 @@
 							
 							clientMode.push('captureimageframes');
 							clientConfig.push({
-								ext:"png",
-								fps:10
+								ext:"png"
 							});
 							dataHandler=(function(){ 
 								var i=1;
 								return function(data){
 									var opts=config();
 									fs.writeFile(clientsfolder+'/f_'+('000000'+(i++)).slice(-6)+'.'+opts.ext, data, function (err) {
+										if (err) throw err;
+									});	
+								}; 
+							})();
+							
+							console.log((cid)+': mode: '+mode());
+							
+						}else if(data.indexOf('begin audioupload')===0){
+							
+							//arguments should be parsed from data, eg data might be: 'begin captureimageframes -fps 10 -mime png'
+							
+							clientMode.push('audioupload');
+							clientConfig.push({
+								ext:"wav"
+							});
+							dataHandler=(function(){ 
+								var i=1;
+								return function(data){
+									var opts=config();
+									fs.writeFile(clientsfolder+'/a_'+('000'+(i++)).slice(-3)+'.'+opts.ext, data, function (err) {
 										if (err) throw err;
 									});	
 								}; 

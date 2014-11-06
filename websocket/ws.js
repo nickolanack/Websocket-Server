@@ -234,6 +234,7 @@
 
 
 		ws.on('message', process);
+		ws.send(""+cid);
 		
 		ws.on('close',function(code, message){
 			

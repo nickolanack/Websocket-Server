@@ -189,20 +189,17 @@
 
 						}else if(data.indexOf('begin captureaudiosamples')===0){
 
-							//arguments should be parsed from data, eg data might be: 'begin captureimageframes -fps 10 -mime png'
+							//arguments should be parsed from data, eg data might be: 'begin captureaudiosamples -f pcm -r 16000 -b 16 -stereo -le'
 
 							clientMode.push('captureaudiosamples');
 							clientConfig.push({
-								ext:"wav"
+								ext:"pcm",
+								rate:16000,
+								bits:16,
+								mono:false
 							});
 							dataHandler=(function(){ 
-								var i=1;
-								return function(data){
-									var opts=config();
-									fs.writeFile(clientsfolder+'/a_'+('000'+(i++)).slice(-3)+'.'+opts.ext, data, function (err) {
-										if (err) throw err;
-									});	
-								}; 
+								//TODO: should write linear pcm values to file and later append wav header...
 							})();
 
 							console.log((cid)+': mode: '+mode());

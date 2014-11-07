@@ -190,90 +190,111 @@
 						}else if(data.indexOf('export')===0){
 
 							var out=clientsfolder+'/out.mp4';
-							var cmd='/usr/local/bin/ffmpeg -framerate 10 -i '+clientsfolder+'/f_%06d.png -c:v libx264 -r 30 -pix_fmt yuv420p '+out;
-
-							shell.exec(cmd, function (error, stdout, stderr) {
-								console.log((cid)+': shell.exec: '+cmd+' >> ');
-								//console.log((cid)+': stdout: '+stdout);
-								//console.log((cid)+': stderr: '+stderr);
-								if (error !== null) {
-									console.log((cid)+': exec error: ' + error);
-								}
-
-
-								fs.exists(out, function(exists){
-									if(exists){
-										
-										
-										var sendBlob=function(file){
-											fs.readFile(file, function (err, data) {
-
-												if (err) {
-													throw err;
-												}
-												ws.send(data, function(){
-
-													fs.readdir(clientsfolder,function(err, files){
-														if(err){
-															console.log('Error reading dir: '+clientsfolder);
-														}else{
-															files.forEach(function(f){
-																fs.unlink(clientsfolder+'/'+f,function(err){
-																	if(err){
-																		throw err;
-																	}else{
-																		//console.log('Deleted: '+folder+'/'+f);
-																		//too much logging...
-																	}
-																});
-															});
-														}
-													});
-
-
-												});
-											});
-										};
-										
-										var audioIn=clientsfolder+'/a_001.wav';
-										fs.exists(audioIn,function(exists){
-											
-											if(exists){
-												
-												var outav=clientsfolder+'/avout.mp4';
-												
-												var cmd='/usr/local/bin/ffmpeg -i '+out+' -i '+audioIn+' -c:v copy -c:a aac -strict experimental '+outav;
-												
-												shell.exec(cmd, function (error, stdout, stderr) {
-													console.log((cid)+': shell.exec: '+cmd+' >> ');
-													//console.log((cid)+': stdout: '+stdout);
-													//console.log((cid)+': stderr: '+stderr);
-													if (error !== null) {
-														console.log((cid)+': exec error: ' + error);
-													}
-
-
-													fs.exists(outav, function(exists){								
-														sendBlob(outav);
-													});
-												});
-												
-											}else{
-												sendBlob(out);
-											}
-											
-											
-										});
-										
-										
-										
-										
-										
+							
+							var encodeVideo=function(cmd){
+								
+								shell.exec(cmd, function (error, stdout, stderr) {
+									console.log((cid)+': shell.exec: '+cmd+' >> ');
+									//console.log((cid)+': stdout: '+stdout);
+									//console.log((cid)+': stderr: '+stderr);
+									if (error !== null) {
+										console.log((cid)+': exec error: ' + error);
 									}
+	
+	
+									fs.exists(out, function(exists){
+										if(exists){
+											
+											
+											var sendBlob=function(file){
+												fs.readFile(file, function (err, data) {
+	
+													if (err) {
+														throw err;
+													}
+													ws.send(data, function(){
+	
+														fs.readdir(clientsfolder,function(err, files){
+															if(err){
+																console.log('Error reading dir: '+clientsfolder);
+															}else{
+																files.forEach(function(f){
+																	fs.unlink(clientsfolder+'/'+f,function(err){
+																		if(err){
+																			throw err;
+																		}else{
+																			//console.log('Deleted: '+folder+'/'+f);
+																			//too much logging...
+																		}
+																	});
+																});
+															}
+														});
+	
+	
+													});
+												});
+											};
+											
+											var audioIn=clientsfolder+'/a_001.wav';
+											fs.exists(audioIn,function(exists){
+												
+												if(exists){
+													
+													var outav=clientsfolder+'/avout.mp4';
+													
+													var cmd='/usr/local/bin/ffmpeg -i '+out+' -i '+audioIn+' -c:v copy -c:a aac -strict experimental '+outav;
+													
+													shell.exec(cmd, function (error, stdout, stderr) {
+														console.log((cid)+': shell.exec: '+cmd+' >> ');
+														//console.log((cid)+': stdout: '+stdout);
+														//console.log((cid)+': stderr: '+stderr);
+														if (error !== null) {
+															console.log((cid)+': exec error: ' + error);
+														}
+	
+	
+														fs.exists(outav, function(exists){								
+															sendBlob(outav);
+														});
+													});
+													
+												}else{
+													sendBlob(out);
+												}
+												
+												
+											});
+											
+											
+											
+											
+											
+										}
+									});
+	
+	
+	
 								});
-
-
-
+							};
+							
+							if(fs.exists(clientsfolder+'/f_000001.png'),function(exists){
+								if(exists){
+									
+									//encode video from png images
+									var cmd='/usr/local/bin/ffmpeg -framerate 10 -i '+clientsfolder+'/f_%06d.png -c:v libx264 -r 30 -pix_fmt yuv420p '+out;
+									encodeVideo(cmd);
+								}else{
+									if(fs.exists(clientsfolder+'/f_000001.jpg'),function(exists){
+										if(exists){
+											//encode video from jpg images
+											var cmd='/usr/local/bin/ffmpeg -framerate 10 -i '+clientsfolder+'/f_%06d.jpg -c:v libx264 -r 30 -pix_fmt yuv420p '+out;
+											encodeVideo(cmd);
+										}else{
+											
+										}
+									});
+								}
 							});
 
 						}else if(data.indexOf('accept audio from')===0){

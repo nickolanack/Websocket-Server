@@ -138,12 +138,23 @@
 
 						if(data.indexOf('begin captureimageframes')===0){
 
-							//arguments should be parsed from data, eg data might be: 'begin captureimageframes -fps 10 -mime png'
+							//arguments should be parsed from data, eg data might be: 'begin captureimageframes -mime png'
+							var d={
+								ext:'png'
+							};
+							data.split(' -').forEach(function(s){
+								
+								if(s.indexOf('mime ')===0){
+									var m=s.split(' ');
+									if(m.length==2&&(['png', 'jpg']).indexOf(m[1])>=0){
+										d.ext=m[1];
+									}
+								}
+								
+							});
 
 							clientMode.push('captureimageframes');
-							clientConfig.push({
-								ext:"png"
-							});
+							clientConfig.push(d);
 							dataHandler=(function(){ 
 								var i=1;
 								return function(data){

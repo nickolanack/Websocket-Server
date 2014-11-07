@@ -187,13 +187,34 @@
 
 							console.log((cid)+': mode: '+mode());
 
-						}else if(data.indexOf('export')===0){
+						}else if(data.indexOf('begin captureaudiosamples')===0){
 
+							//arguments should be parsed from data, eg data might be: 'begin captureimageframes -fps 10 -mime png'
+
+							clientMode.push('captureaudiosamples');
+							clientConfig.push({
+								ext:"wav"
+							});
+							dataHandler=(function(){ 
+								var i=1;
+								return function(data){
+									var opts=config();
+									fs.writeFile(clientsfolder+'/a_'+('000'+(i++)).slice(-3)+'.'+opts.ext, data, function (err) {
+										if (err) throw err;
+									});	
+								}; 
+							})();
+
+							console.log((cid)+': mode: '+mode());
+
+						}else if(data.indexOf('export')===0){
+							ws.send('begining transcode');
 							var out=clientsfolder+'/out.mp4';
 							
 							var encodeVideo=function(cmd){
 								
 								shell.exec(cmd, function (error, stdout, stderr) {
+									
 									console.log((cid)+': shell.exec: '+cmd+' >> ');
 									//console.log((cid)+': stdout: '+stdout);
 									//console.log((cid)+': stderr: '+stderr);
@@ -236,11 +257,12 @@
 												});
 											};
 											
+											ws.send('...');
 											var audioIn=clientsfolder+'/a_001.wav';
-											fs.exists(audioIn,function(exists){
+											fs.exists(audioIn, function(exists){
 												
 												if(exists){
-													
+													ws.send('finished transcode');
 													var outav=clientsfolder+'/avout.mp4';
 													
 													var cmd='/usr/local/bin/ffmpeg -i '+out+' -i '+audioIn+' -c:v copy -c:a aac -strict experimental '+outav;
@@ -256,10 +278,12 @@
 	
 														fs.exists(outav, function(exists){								
 															sendBlob(outav);
+															
 														});
 													});
 													
 												}else{
+													ws.send('finished transcode without audio');
 													sendBlob(out);
 												}
 												
@@ -270,6 +294,8 @@
 											
 											
 											
+										}else{
+											ws.send('transcode error: no output');
 										}
 									});
 	
@@ -278,20 +304,21 @@
 								});
 							};
 							
-							if(fs.exists(clientsfolder+'/f_000001.png'),function(exists){
+							fs.exists(clientsfolder+'/f_000001.png',function(exists){
 								if(exists){
-									
+									ws.send('transcoder detected png list');
 									//encode video from png images
 									var cmd='/usr/local/bin/ffmpeg -framerate 10 -i '+clientsfolder+'/f_%06d.png -c:v libx264 -r 30 -pix_fmt yuv420p '+out;
 									encodeVideo(cmd);
 								}else{
-									if(fs.exists(clientsfolder+'/f_000001.jpg'),function(exists){
+									fs.exists(clientsfolder+'/f_000001.jpg', function(exists){
 										if(exists){
+											ws.send('transcoder detected jpg list');
 											//encode video from jpg images
 											var cmd='/usr/local/bin/ffmpeg -framerate 10 -i '+clientsfolder+'/f_%06d.jpg -c:v libx264 -r 30 -pix_fmt yuv420p '+out;
 											encodeVideo(cmd);
 										}else{
-											
+											console.log((cid)+': transcode error, did not find png, or jpg images');
 										}
 									});
 								}

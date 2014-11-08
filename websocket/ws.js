@@ -26,7 +26,7 @@
  * 				the client can decide the quality and size of the images it is 
  * 
  * 		stop 
- * 				signals the end of above commands. 
+ * 				signals the end of any command starting with 'begin'. 
  * 
  * 		export [options] 
  * 				only available to client websocket after: 'begin captureimageframes' [...frames...] 'stop'
@@ -39,6 +39,10 @@
  * 		start audio recorder.
  * 		send: 'begin captureimageframes'
  * 		start video processing loop (draw video to blob) 
+ * 
+ * 		...
+ * 		send [Blob image]
+ * 		send [Blob image]
  * 		send [Blob image]
  * 		...
  * 

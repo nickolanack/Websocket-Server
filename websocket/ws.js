@@ -5,9 +5,10 @@
  * and provides a few services depending on the command given by the client. 
  * 
  * 	on successful connection, the servers first response is a unique id [client id] for the client. 
- *  this is important if the client application uses multiple websockets to share data. see 'websocket pair commands' below
+ *  this is important if the client application uses multiple websockets and intends to share data. see 'websocket pair commands' below
  * 
  * 	commands:
+ * 
  * 		begin audioupload [options] 		
  * 				prepares server to receive an audio file (.wav)
  * 
@@ -26,12 +27,42 @@
  * 				only available to client websocket after: 'begin captureimageframes' [...frames...] 'stop'
  * 				sever transcodes video (and audio if available) into mp4 (TODO or webm, ogv) and sends back to client as Blob video/[mp4|...]
  * 
- * 				
+ * 		
+ * 	example: single socket audio video pseudo-code. 
+ * 
+ * 		create socket. 
+ * 		start audio recorder.
+ * 		send: 'begin captureimageframes'
+ * 		start video processing loop (draw video to blob) 
+ * 		send [Blob image]
+ * 		...
+ * 
+ * 		(finished) stop looping and convert audio to .wav blob
+ * 
+ * 		send: 'stop'
+ * 		send: 'begin audioupload'
+ * 		send: [Blob audio]
+ * 		send: 'stop'
+ * 		send: 'export'
+ * 		
+ * 		recieve: [Blob video]
+ * 	
+ * 		
  * 
  * 
  * 	websocket pair commands:
+ * 
  * 		give audio to [client id]
  * 		accept audio from [client id] 
+ * 
+ * 				the order of these commands does not matter, however, both commands must be completed before access 
+ * 				will be given to the acceptor
+ * 				
+ * 				if client A records video and client B records audio then: 
+ * 				client A sends: 'accept audio from B' 
+ * 				and client B sends: 'give audio to A' 
+ * 				then when client A performs any export command (only A can export since only A has video content)
+ * 				it will be able to use the audio from B. 
  * 
  * 				multiple WebSockets can be used by a single client, for example: one for video and one for audio. 
  * 				this allows both sockets to stream data simultaneously. 

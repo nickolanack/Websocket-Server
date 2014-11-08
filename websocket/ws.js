@@ -1,4 +1,46 @@
-
+/**
+ * Node JS Websocket Media Processing Server By Nick Blackwell. 
+ * 
+ * This tool provides a command line like interface to websocket clients. 
+ * and provides a few services depending on the command given by the client. 
+ * 
+ * 	on successful connection, the servers first response is a unique id [client id] for the client. 
+ *  this is important if the client application uses multiple websockets to share data. see 'websocket pair commands' below
+ * 
+ * 	commands:
+ * 		begin audioupload [options] 		
+ * 				prepares server to receive an audio file (.wav)
+ * 
+ * 		begin captureaudiosamples [options] 
+ * 				NOT IMPLEMENTED // prepares server to receive audio sample stream, 
+ * 				client should define channels, samplerate, bits per sample, endian-ness - (assumes pcm stream)
+ * 
+ * 		begin captureimageframes [options: -mime jpg/png]
+ * 				prepares server to receive video image frames as png or jpg 
+ * 				client should then send sequential images as Blobs image/[jpg|png]
+ * 
+ * 		stop 
+ * 				signals the end of above commands. 
+ * 
+ * 		export [options] 
+ * 				only available to client websocket after: 'begin captureimageframes' [...frames...] 'stop'
+ * 				sever transcodes video (and audio if available) into mp4 (TODO or webm, ogv) and sends back to client as Blob video/[mp4|...]
+ * 
+ * 				
+ * 
+ * 
+ * 	websocket pair commands:
+ * 		give audio to [client id]
+ * 		accept audio from [client id] 
+ * 
+ * 				multiple WebSockets can be used by a single client, for example: one for video and one for audio. 
+ * 				this allows both sockets to stream data simultaneously. 
+ * 				
+ * 
+ * @author Nick Blackwell https://people.ok.ubc.ca/nblackwe
+ *
+ * 
+ */
 (function(port){
 	//create the websocket server and start running.
 	var WebSocketServer = require('ws').Server;

@@ -25,11 +25,11 @@
  * 				client should then send sequential images as Blobs image/[jpg|png]
  * 				the client can decide the quality and size of the images it is 
  * 
- * 		stop 
+ * 		end 
  * 				signals the end of any command starting with 'begin'. 
  * 
  * 		export [options] 
- * 				only available to client websocket after: 'begin captureimageframes' [...frames...] 'stop'
+ * 				only available to client websocket after: 'begin captureimageframes' [...frames...] 'end'
  * 				sever transcodes video (and audio if available) into mp4 (TODO or webm, ogv) and sends back to client as Blob video/[mp4|...]
  * 
  * 		
@@ -48,10 +48,10 @@
  * 
  * 		(finished) stop looping and convert audio to .wav blob
  * 
- * 		send: 'stop'
+ * 		send: 'end'
  * 		send: 'begin audioupload'
  * 		send: [Blob audio]
- * 		send: 'stop'
+ * 		send: 'end'
  * 		send: 'export'
  * 		
  * 		recieve: [Blob video]
@@ -446,7 +446,7 @@
 
 					}else{
 
-						if(data==='stop'){
+						if(data==='end'){
 
 							clientMode.pop();
 							clientConfig.pop();

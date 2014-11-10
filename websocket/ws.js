@@ -8,7 +8,7 @@
  * This tool provides a command line like interface for websocket clients. 
  * and provides a few services depending on the command given by the client. 
  * 
- * 	on successful connection, the servers first responds with a unique id [client id] for the client. 
+ * 	on successful connection, the servers first response id a unique id [client id] for the client. 
  *  this is important if the client application uses multiple websockets and intends to share data. see 'websocket pair commands' below
  * 
  * 	commands:
@@ -23,7 +23,7 @@
  * 		begin captureimageframes [options: -mime jpg/png]
  * 				prepares server to receive video image frames as png or jpg 
  * 				client should then send sequential images as Blobs image/[jpg|png]
- * 				the client can decide the quality and size of the images it is 
+ * 				the client can decide the quality and size of the images it is sending 
  * 
  * 		end 
  * 				signals the end of any command starting with 'begin'. 
